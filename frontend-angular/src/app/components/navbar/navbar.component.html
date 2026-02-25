@@ -1,0 +1,27 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" [routerLink]="['/recetas']" (click)="closeMenu()">🍳 Recetas</a>
+    <button 
+      class="navbar-toggler" 
+      type="button" 
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuAbierto">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" [class.show]="menuAbierto">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/recetas']" (click)="closeMenu()">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/recetas']" (click)="closeMenu()">Todas las Recetas</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/nueva-receta']" (click)="closeMenu()">
+            <button class="btn btn-primary btn-sm">+ Nueva Receta</button>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

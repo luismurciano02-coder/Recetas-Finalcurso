@@ -1,0 +1,90 @@
+<div class="container py-5" *ngIf="!cargando">
+  <button class="btn btn-secondary mb-4" (click)="volverAtras()">
+    ← Volver
+  </button>
+
+  <div *ngIf="mostrarError && error" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error:</strong> {{ error }}
+    <button type="button" class="btn-close" (click)="mostrarError = false"></button>
+  </div>
+
+  <div *ngIf="mostrarConfirmarEliminar" class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title">Confirmar Eliminación</h5>
+          <button type="button" class="btn-close" (click)="cancelarEliminar()"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás seguro de que deseas eliminar la receta "{{ receta?.nombre }}"? Esta acción no se puede deshacer.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="cancelarEliminar()">Cancelar</button>
+          <button type="button" class="btn btn-danger" (click)="eliminarReceta()">Sí, eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="receta" class="row">
+    <div class="col-md-12">
+      <h1 class="display-4 mb-2">{{ receta.nombre }}</h1>
+
+      <div class="mb-3">
+        <span class="badge bg-info me-1" *ngFor="let cat of receta.categorias">{{ cat }}</span>
+      </div>
+
+      <p class="lead text-muted mb-4">{{ receta.descripcion }}</p>
+
+      <div class="info-rapida mb-4 p-3 bg-light rounded">
+        <div class="row">
+          <div class="col-6 mb-2">
+            <strong>⭐ Puntuación:</strong> {{ receta.valoracion.puntuacion }} / 5
+          </div>
+          <div class="col-6 mb-2">
+            <strong>🗳️ Votos:</strong> {{ receta.valoracion.votos }}
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-group-vertical w-100 mb-4">
+        <a [routerLink]="['/editar', receta._id]" class="btn btn-warning btn-lg mb-2">
+          ✏️ Editar Receta
+        </a>
+        <button type="button" class="btn btn-danger btn-lg" (click)="abrirConfirmarEliminar()">
+          🗑️ Eliminar Receta
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="receta" class="row mt-5">
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">📋 Ingredientes</h5>
+        </div>
+        <div class="card-body">
+          <p class="mb-0">{{ receta.ingredientes }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">👨‍🍳 Instrucciones</h5>
+        </div>
+        <div class="card-body">
+          <p class="mb-0">{{ receta.instrucciones }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="cargando" class="d-flex justify-content-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Cargando...</span>
+  </div>
+</div>

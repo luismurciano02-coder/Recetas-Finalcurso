@@ -1,0 +1,7 @@
+{
+  "typescript.tsdk": "frontend-angular/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": false,
+  "problems.decorations.enabled": false,
+  "explorer.decorations.badges": false,
+  "explorer.decorations.colors": false
+}

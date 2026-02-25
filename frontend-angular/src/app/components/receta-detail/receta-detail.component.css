@@ -1,0 +1,45 @@
+.image-container {
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 400px;
+  background-color: #f8f9fa;
+}
+
+.info-rapida {
+  border-left: 4px solid #0d6efd;
+}
+
+.badge {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.8rem;
+}
+
+.btn-group-vertical .btn {
+  border-radius: 0.5rem;
+}
+
+.list-group-item {
+  border: none;
+  border-bottom: 1px solid #dee2e6;
+  padding: 0.75rem 0;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.list-group-item input[type="checkbox"] {
+  cursor: pointer;
+}

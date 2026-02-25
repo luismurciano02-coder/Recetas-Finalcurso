@@ -1,0 +1,186 @@
+<div class="container py-5">
+  <div *ngIf="mostrarError && error" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error:</strong> {{ error }}
+    <button type="button" class="btn-close" (click)="mostrarError = false"></button>
+  </div>
+
+  <div *ngIf="exito" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>¡Éxito!</strong> Receta {{ esEdicion ? 'actualizada' : 'creada' }} correctamente. Redirigiendo...
+    <button type="button" class="btn-close" (click)="exito = false"></button>
+  </div>
+
+  <div class="mb-4">
+    <h1 class="display-4 mb-2">
+      {{ esEdicion ? '✏️ Editar Receta' : '➕ Nueva Receta' }}
+    </h1>
+    <p class="text-muted">Formulario reactivo con validaciones visuales y funcionales</p>
+  </div>
+
+  <form [formGroup]="formulario" (ngSubmit)="guardarReceta()" *ngIf="!cargando">
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">📝 Información Básica</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="nombre"
+                formControlName="nombre"
+                [class.is-invalid]="tieneError('nombre')"
+                placeholder="Ej: Pasta Carbonara">
+              <div class="invalid-feedback" *ngIf="tieneError('nombre')">
+                {{ getErrorMessage('nombre') }}
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción <span class="text-danger">*</span></label>
+              <textarea 
+                class="form-control" 
+                id="descripcion"
+                formControlName="descripcion"
+                [class.is-invalid]="tieneError('descripcion')"
+                rows="4"
+                placeholder="Describe tu receta en detalle..."></textarea>
+              <small class="form-text text-muted">
+                {{ formulario.get('descripcion')?.value?.length || 0 }}/1200 caracteres
+              </small>
+              <div class="invalid-feedback" *ngIf="tieneError('descripcion')">
+                {{ getErrorMessage('descripcion') }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">📋 Ingredientes <span class="text-danger">*</span></h5>
+          </div>
+          <div class="card-body">
+            <textarea
+              class="form-control"
+              rows="5"
+              formControlName="ingredientes"
+              [class.is-invalid]="tieneError('ingredientes')"
+              placeholder="Ej: Arroz, pollo, tomate, aceite..."></textarea>
+            <div class="invalid-feedback" *ngIf="tieneError('ingredientes')">
+              {{ getErrorMessage('ingredientes') }}
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0">👨‍🍳 Instrucciones <span class="text-danger">*</span></h5>
+          </div>
+          <div class="card-body">
+            <textarea
+              class="form-control"
+              rows="5"
+              formControlName="instrucciones"
+              [class.is-invalid]="tieneError('instrucciones')"
+              placeholder="Describe cómo preparar la receta paso a paso"></textarea>
+            <div class="invalid-feedback" *ngIf="tieneError('instrucciones')">
+              {{ getErrorMessage('instrucciones') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0">⚙️ Detalles</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label class="form-label">Categorías <span class="text-danger">*</span></label>
+              <div class="d-flex flex-wrap gap-2">
+                <div class="form-check" *ngFor="let cat of categoriasDisponibles">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    [id]="'cat-' + cat"
+                    [checked]="formulario.get('categorias')?.value?.includes(cat)"
+                    (change)="alternarCategoria(cat)"
+                  >
+                  <label class="form-check-label" [for]="'cat-' + cat">{{ cat }}</label>
+                </div>
+              </div>
+              <div class="text-danger small mt-2" *ngIf="tieneError('categorias')">
+                {{ getErrorMessage('categorias') }}
+              </div>
+            </div>
+
+            <div formGroupName="valoracion">
+              <div class="mb-3">
+                <label for="puntuacion" class="form-label">Puntuación (0-5) <span class="text-danger">*</span></label>
+                <input 
+                  type="number"
+                  class="form-control"
+                  id="puntuacion"
+                  formControlName="puntuacion"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  [class.is-invalid]="tieneError('valoracion.puntuacion')">
+                <div class="invalid-feedback" *ngIf="tieneError('valoracion.puntuacion')">
+                  {{ getErrorMessage('valoracion.puntuacion') }}
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="votos" class="form-label">Votos <span class="text-danger">*</span></label>
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  id="votos"
+                  formControlName="votos"
+                  [class.is-invalid]="tieneError('valoracion.votos')"
+                  min="0">
+                <div class="invalid-feedback" *ngIf="tieneError('valoracion.votos')">
+                  {{ getErrorMessage('valoracion.votos') }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col">
+        <button 
+          type="submit" 
+          class="btn btn-primary btn-lg me-2"
+          [disabled]="guardando">
+          <span *ngIf="!guardando">
+            {{ esEdicion ? '💾 Actualizar Receta' : '➕ Crear Receta' }}
+          </span>
+          <span *ngIf="guardando">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Guardando...
+          </span>
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-secondary btn-lg"
+          (click)="cancelar()"
+          [disabled]="guardando">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </form>
+
+  <div *ngIf="cargando" class="d-flex justify-content-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+</div>
