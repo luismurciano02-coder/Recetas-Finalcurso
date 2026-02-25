@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.recetas.example.com/api/v1'
+  apiUrl: 'https://recetas-finalcurso-backend.vercel.app/api/v1'
 };
