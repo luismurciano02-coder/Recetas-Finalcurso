@@ -1,4 +1,7 @@
-const API_URL = 'http://localhost:3000/api/v1/recetas';
+const API_URL = import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD
+    ? 'https://recetas-finalcurso-backend.vercel.app/api/v1/recetas'
+    : 'http://localhost:3000/api/v1/recetas');
 
 const buildQuery = ({ page = 1, limit = 6, categoria = '', q = '' } = {}) => {
   const params = new URLSearchParams();
