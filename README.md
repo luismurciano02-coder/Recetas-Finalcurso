@@ -3,93 +3,99 @@
 Proyecto full-stack con backend en Node.js + Express + MongoDB (Mongoose) y dos frontends (Angular y React) consumiendo la misma API.
 
 ## 1) Estructura del proyecto
+# Recetas Final Curso (DWEC)
+
+Proyecto full-stack con arquitectura tipo MEAN (MongoDB, Express, Angular, Node) + frontend React alternativo. Ambos frontends consumen la misma API REST de recetas.
+
+## Descripción
+
+Aplicación para gestionar recetas con operaciones CRUD completas, validaciones en backend y frontend, filtrado por categoría y paginación en API.
+
+## Tecnologías
+
+- Backend: Node.js, Express, MongoDB, Mongoose, Morgan, CORS
+- Frontend Angular: Angular 19, Bootstrap 5, HttpClient, Reactive Forms
+- Frontend React: React 18, React Router, Bootstrap 5, Fetch API
+
+## Estructura real del proyecto
 
 ```text
 RECETAS-FINALCURSO/
 ├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   └── database.js
-│   │   ├── models/
-│   │   │   └── Recipe.js
-│   │   ├── controllers/
-│   │   │   └── recipeController.js
-│   │   ├── routes/
-│   │   │   └── recipeRoutes.js
-│   │   ├── middlewares/
-│   │   │   ├── errorHandler.js
-│   │   │   └── validateRecipe.js
-│   │   ├── app.js
-│   │   ├── server.js
-│   │   └── seed.js
+│   ├── index.js
+│   ├── database.js
+│   ├── models/
+│   │   └── receta.model.js
+│   ├── controllers/
+│   │   └── receta.controller.js
+│   ├── routes/
+│   │   └── receta.route.js
 │   └── package.json
 ├── frontend-angular/
+│   └── ...
 └── frontend-react/
+		└── ...
 ```
 
-## 2) Entidad principal: Receta
+## Entidad principal: Receta
 
-Campos implementados:
+```json
+{
+	"nombre": "String (obligatorio)",
+	"descripcion": "String (obligatorio)",
+	"ingredientes": "String (obligatorio)",
+	"instrucciones": "String (obligatorio)",
+	"categorias": ["String (obligatorio)"],
+	"valoracion": {
+		"puntuacion": "Number (obligatorio)",
+		"votos": "Number (obligatorio)"
+	}
+}
+```
 
-- `_id` (id MongoDB)
-- `nombre` (string)
-- `descripcion` (string)
-- `tiempoPreparacion` (number)
-- `fechaPublicacion` (date)
-- `esPublicada` (boolean)
-- `categoria` (string)
-- `ingredientes` (array de string)
-- `pasos` (array de string)
-- `imagenUrl` (string)
-- `createdAt` y `updatedAt` (automáticos)
+## Reglas de negocio implementadas
 
-## 3) Reglas de negocio obligatorias
+- Validación de campos obligatorios en backend para crear y actualizar.
+- Respuesta `400` con detalle de campos cuando faltan valores.
+- Validación adicional de tipos numéricos en `valoracion.puntuacion` y `valoracion.votos`.
+- Listado de categorías únicas desde la base de datos.
+- Paginación backend con `page` y `limit`, y filtros por `categoria` y `q`.
 
-- No permitir recetas duplicadas por nombre.
-- Validar que `tiempoPreparacion` sea mayor a 0.
-- No permitir fechas de publicación en el pasado.
-- Permitir filtrar por categoría.
-- No permitir recetas sin ingredientes.
+## API REST
 
-## 4) Endpoints de la API
-
-Base URL:
+Base URL local:
 
 ```text
 http://localhost:3000/api/v1/recetas
 ```
 
-- `GET /get/all`
-- `GET /get/:id`
-- `POST /post`
-- `PUT /update/:id`
-- `DELETE /delete/:id`
-- `GET /paginate?page=1&limit=10`
+### Endpoints
 
-También soporta filtro por categoría en listados/paginación con `?categoria=...`.
+- `GET /` → lista completa
+- `GET /paginate?page=1&limit=10&categoria=&q=` → lista paginada
+- `GET /receta/:id` → detalle por id
+- `POST /anadir` → crear receta
+- `PUT /actualizar/:id` → actualizar receta
+- `DELETE /:id` → eliminar receta
+- `GET /categorias` → categorías existentes
 
-## 5) Seed de datos
+## Instalación y ejecución
 
-Se incluye `backend/src/seed.js` con **20 recetas iniciales** de ejemplo compatibles con las validaciones.
-
-## 6) Instalación y ejecución
-
-### Requisitos previos
-
-- Node.js 18+
-- MongoDB en local o remoto
-
-### Backend
+### 1) Backend
 
 ```bash
 cd backend
 npm install
-cp .env.example .env
-npm run seed
 npm run dev
 ```
 
-### Frontend Angular
+Servidor API en:
+
+```text
+http://localhost:3000
+```
+
+### 2) Frontend Angular
 
 ```bash
 cd frontend-angular
@@ -97,9 +103,7 @@ npm install
 npm start
 ```
 
-URL esperada: `http://localhost:4200`
-
-### Frontend React
+### 3) Frontend React
 
 ```bash
 cd frontend-react
@@ -107,41 +111,30 @@ npm install
 npm run dev
 ```
 
-URL esperada: `http://localhost:5173`
-
-## 7) Funcionalidad frontend incluida
+## Funcionalidad frontend
 
 ### Angular
 
-- Listado con paginación y filtro por categoría.
-- Búsqueda local por nombre/descripcion.
-- CRUD completo.
-- Formularios reactivos con validaciones visuales y funcionales.
-- Loader y alertas de éxito/error.
-- Bootstrap integrado.
+- CRUD completo
+- Formularios reactivos
+- Validaciones visuales campo a campo
+- Mensajes de error y éxito
+- Paginación y filtros
+- Bootstrap
 
 ### React
 
-- Componentes funcionales.
-- Hooks `useState` y `useEffect`.
-- React Router.
-- CRUD completo.
-- Formularios controlados con validaciones.
-- Alertas y paginación.
-- Bootstrap integrado.
+- CRUD completo
+- Validaciones visuales campo a campo (obligatorios en rojo)
+- Mensajes de error por campo y generales
+- Paginación conectada al endpoint backend
+- Bootstrap
 
-## 8) Espacios para despliegue y evidencias
+## Autor
 
-- URL Backend desplegado: ___________________________
-- URL Frontend Angular desplegado: __________________
-- URL Frontend React desplegado: ____________________
+Proyecto desarrollado por **Luis Murciano**.
 
-Capturas sugeridas:
+## Licencia
 
-- [ ] Listado Angular
-- [ ] Formulario Angular
-- [ ] Detalle Angular
-- [ ] Listado React
-- [ ] Formulario React
-- [ ] Detalle React
-- [ ] Respuesta paginada API en Postman
+Uso educativo.
+
