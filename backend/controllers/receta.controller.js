@@ -1,4 +1,5 @@
 const Receta = require('../models/receta.model');
+const { connectDB } = require('../database');
 const recetaCtrl = {};
 
 const validarBodyReceta = (body) => {
@@ -49,14 +50,19 @@ const validarBodyReceta = (body) => {
 
 // Obtener todas las recetas
 recetaCtrl.getRecetas = async (req, res) => {
-    const recetas = await Receta.find()
-        .then((data)=>res.status(200).json({status:data}))
-        .catch((err)=>res.status(400).json({status:err}));
+    try {
+        await connectDB();
+        const data = await Receta.find();
+        return res.status(200).json({ status: data });
+    } catch (err) {
+        return res.status(400).json({ status: err.message || 'Error al obtener recetas' });
+    }
 };
 
 // Obtener recetas paginadas
 recetaCtrl.getRecetasPaginadas = async (req, res) => {
     try {
+        await connectDB();
         const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
         const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 50);
         const categoria = req.query.categoria ? String(req.query.categoria).trim() : '';
@@ -106,13 +112,14 @@ recetaCtrl.getRecetasPaginadas = async (req, res) => {
 
 // Obtener una receta por ID
 recetaCtrl.getReceta = async (req, res) => {
-    const receta = await Receta.findById(req.params.id)
-        .then(data=>
-        {
-            if(data!=null) res.status(200).json({status:data});
-            else res.status(404).json({status:'Receta not found'})
-        })
-        .catch((err)=>res.status(400).json({status:err}));
+    try {
+        await connectDB();
+        const data = await Receta.findById(req.params.id);
+        if (data) return res.status(200).json({ status: data });
+        return res.status(404).json({ status: 'Receta not found' });
+    } catch (err) {
+        return res.status(400).json({ status: err.message || 'Error al obtener receta' });
+    }
 };
 
 // Agregar una receta nueva
@@ -124,11 +131,14 @@ recetaCtrl.addReceta = async (req, res) => {
             errors: erroresValidacion
         });
     }
-
-    const receta = new Receta(req.body);
-    await receta.save()
-        .then((data)=> res.status(201).json({status:'Receta Successully Inserted'}))
-        .catch((err)=>res.status(400).json({status:err}));
+    try {
+        await connectDB();
+        const receta = new Receta(req.body);
+        await receta.save();
+        return res.status(201).json({ status: 'Receta Successully Inserted' });
+    } catch (err) {
+        return res.status(400).json({ status: err.message || 'Error al crear receta' });
+    }
 };
 
 // Actualizar una receta
@@ -140,36 +150,43 @@ recetaCtrl.updateReceta = async (req, res) => {
             errors: erroresValidacion
         });
     }
+    try {
+        await connectDB();
+        const receta = req.body;
+        const data = await Receta.findByIdAndUpdate(
+            req.params.id,
+            { $set: receta },
+            { new: true, runValidators: true }
+        );
 
-    const receta = req.body;
-    await Receta.findByIdAndUpdate(
-        req.params.id,
-        {$set: receta},
-        {new: true, runValidators: true})
-        .then((data)=> {
-            if(data)res.status(200).json({status:'Receta Successully Updated'});
-            else res.status(404).json({status:'Receta not found'})
-        })
-        .catch((err)=>res.status(400).json({status:err}));
+        if (data) return res.status(200).json({ status: 'Receta Successully Updated' });
+        return res.status(404).json({ status: 'Receta not found' });
+    } catch (err) {
+        return res.status(400).json({ status: err.message || 'Error al actualizar receta' });
+    }
 };
 
 // Eliminar una receta
 recetaCtrl.deleteReceta = async (req, res) => {
-    await Receta.findByIdAndDelete(req.params.id)
-        .then((data)=> {
-            if(data)res.status(200).json({status:'Receta Successully Deleted'});
-            else res.status(404).json({status:'Receta not found'})
-        })
-        .catch((err)=>res.status(400).json({status:err}));
+    try {
+        await connectDB();
+        const data = await Receta.findByIdAndDelete(req.params.id);
+        if (data) return res.status(200).json({ status: 'Receta Successully Deleted' });
+        return res.status(404).json({ status: 'Receta not found' });
+    } catch (err) {
+        return res.status(400).json({ status: err.message || 'Error al eliminar receta' });
+    }
 };
 
 // Saca la Lista de Categorias
 recetaCtrl.getCategorias = async (req, res) => {
-    await Receta.find().distinct('categorias')
-        .then((data)=> {
-            res.status(200).json({status:data})
-        })
-        .catch((err)=>res.status(400).json({status:err}));
+    try {
+        await connectDB();
+        const data = await Receta.find().distinct('categorias');
+        return res.status(200).json({ status: data });
+    } catch (err) {
+        return res.status(400).json({ status: err.message || 'Error al obtener categorías' });
+    }
 };
 
 module.exports = recetaCtrl;

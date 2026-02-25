@@ -1,7 +1,28 @@
 const mongoose = require('mongoose');
-const URI = 'mongodb+srv://recetas:wdsa1234@recetas-proyectofinal.vd8t6pp.mongodb.net/recetas?appName=RECETAS-PROYECTOFINAL';
-mongoose.connect(URI)
-    .then(db => console.log('DB is connected'))
-    .catch(err => console.error(err));
+const URI = process.env.MONGODB_URI || 'mongodb+srv://recetas:wdsa1234@recetas-proyectofinal.vd8t6pp.mongodb.net/recetas?appName=RECETAS-PROYECTOFINAL';
 
-module.exports = mongoose;
+const globalWithMongoose = global;
+
+if (!globalWithMongoose._mongooseCache) {
+    globalWithMongoose._mongooseCache = { conn: null, promise: null };
+}
+
+const cache = globalWithMongoose._mongooseCache;
+
+const connectDB = async () => {
+    if (cache.conn) {
+        return cache.conn;
+    }
+
+    if (!cache.promise) {
+        cache.promise = mongoose.connect(URI).then((connection) => {
+            console.log('DB is connected');
+            return connection;
+        });
+    }
+
+    cache.conn = await cache.promise;
+    return cache.conn;
+};
+
+module.exports = { mongoose, connectDB };
