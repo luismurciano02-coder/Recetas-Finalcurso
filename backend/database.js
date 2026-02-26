@@ -22,6 +22,10 @@ const connectDB = async () => {
         }).then((connection) => {
             console.log('DB is connected');
             return connection;
+        }).catch((error) => {
+            cache.promise = null;
+            cache.conn = null;
+            throw error;
         });
     }
 
