@@ -15,7 +15,11 @@ const connectDB = async () => {
     }
 
     if (!cache.promise) {
-        cache.promise = mongoose.connect(URI).then((connection) => {
+        cache.promise = mongoose.connect(URI, {
+            family: 4,
+            serverSelectionTimeoutMS: 10000,
+            socketTimeoutMS: 45000,
+        }).then((connection) => {
             console.log('DB is connected');
             return connection;
         });
